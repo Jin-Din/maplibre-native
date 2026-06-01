@@ -30,10 +30,12 @@ import org.maplibre.android.exceptions.MapLibreConfigurationException;
 import org.maplibre.android.location.LocationComponent;
 import org.maplibre.android.maps.renderer.MapRenderer;
 import org.maplibre.android.maps.widgets.CompassView;
+import org.maplibre.android.maps.widgets.ZoomInOutView;
 import org.maplibre.android.net.ConnectivityReceiver;
 import org.maplibre.android.storage.FileSource;
 import org.maplibre.android.utils.BitmapUtils;
 import org.maplibre.android.tile.TileOperation;
+import org.maplibre.android.camera.CameraUpdateFactory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -76,6 +78,11 @@ public class MapView extends FrameLayout implements NativeMapView.ViewCallback {
   @Nullable
   private CompassView compassView;
   private PointF focalPoint;
+
+
+  //@Jin 地图缩放组件
+  @Nullable
+  private ZoomInOutView zoomInOutView;
 
   // callback for focal point invalidation
   private final FocalPointInvalidator focalInvalidator = new FocalPointInvalidator();
@@ -231,8 +238,29 @@ public class MapView extends FrameLayout implements NativeMapView.ViewCallback {
     logoView.setTag("logoView");
     logoView.getLayoutParams().width = LayoutParams.WRAP_CONTENT;
     logoView.getLayoutParams().height = LayoutParams.WRAP_CONTENT;
-    logoView.setImageDrawable(BitmapUtils.getDrawableFromRes(getContext(), R.drawable.maplibre_logo_icon));
+//    logoView.setImageDrawable(BitmapUtils.getDrawableFromRes(getContext(), R.drawable.maplibre_logo_icon));
+    // @Jin 更改 logo
+    logoView.setImageDrawable(BitmapUtils.getDrawableFromRes(getContext(), R.drawable.tianditu_logo_icon));
     return logoView;
+  }
+
+
+  //@Jin 创建地图缩放组件
+  protected ZoomInOutView initializeZoomInOutView() {
+    zoomInOutView = new ZoomInOutView(this.getContext());
+    addView(zoomInOutView);
+    zoomInOutView.setTag("zoomInOutView");
+    zoomInOutView.getLayoutParams().width = LayoutParams.WRAP_CONTENT;
+    zoomInOutView.getLayoutParams().height = LayoutParams.WRAP_CONTENT;
+    zoomInOutView.setOnZoomInClickListener(() -> {
+      if(maplibreMap != null)
+        maplibreMap.animateCamera(CameraUpdateFactory.zoomIn());
+    });
+    zoomInOutView.setOnZoomOutClickListener(() -> {
+      if(maplibreMap != null)
+        maplibreMap.animateCamera(CameraUpdateFactory.zoomOut());
+    });
+    return zoomInOutView;
   }
 
   private FocalPointChangeListener createFocalPointChangeListener() {

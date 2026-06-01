@@ -3,6 +3,14 @@ package org.maplibre.android.testapp.styles
 import org.maplibre.android.maps.Style
 
 object TestStyles {
+
+    //@Jin 自定义服务地址，天地图陕西的矢量瓦片服务
+    const val YOUMAP_DEFAULT_STYLE = "http://210.74.129.84:8520/styles/vector_style_3857_proxy.json"
+    const val ASSET_TIANDITU_W_STYLE="asset://styles/tdt_w.json"
+
+    const val ASSET_YOUMAP_DEFAULT_STYLE="asset://styles/vector_style_3857_proxy_default.json"
+    const val ASSET_YOUMAP_BLUE_STYLE="asset://styles/vector_style_3857_proxy_blue.json"
+
     const val DEMOTILES = "https://demotiles.maplibre.org/style.json"
 
     const val AMERICANA = "https://americanamap.org/style.json"

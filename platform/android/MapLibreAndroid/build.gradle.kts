@@ -2,7 +2,8 @@ plugins {
     id("com.android.library")
     alias(libs.plugins.kotlinter)
     alias(libs.plugins.dokka)
-    id("maplibre.download-vulkan-validation")
+    // @Jin 暂且注释掉  Vulkan 验证层
+//    id("maplibre.download-vulkan-validation")
     id("maplibre.gradle-checkstyle")
     id("maplibre.gradle-dependencies-graph")
     id("maplibre.android-nitpick")

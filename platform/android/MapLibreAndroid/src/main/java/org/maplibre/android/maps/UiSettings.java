@@ -7,6 +7,7 @@ import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -25,6 +26,7 @@ import org.maplibre.android.R;
 import org.maplibre.android.camera.CameraPosition;
 import org.maplibre.android.constants.MapLibreConstants;
 import org.maplibre.android.maps.widgets.CompassView;
+import org.maplibre.android.maps.widgets.ZoomInOutView;
 import org.maplibre.android.utils.BitmapUtils;
 import org.maplibre.android.utils.ColorUtils;
 
@@ -54,6 +56,13 @@ public final class UiSettings {
   @Nullable
   ImageView logoView;
   private final int[] logoMargins = new int[4];
+
+
+  //@Jin 地图缩放组件
+  @VisibleForTesting
+  @Nullable
+  ZoomInOutView zoomInOutView;
+  private final int[] zoomInOutMargins = new int[4];
 
   private final float pixelRatio;
 
@@ -97,6 +106,10 @@ public final class UiSettings {
   boolean isLogoInitialized = false;
   private double clockwiseBearing;
 
+  //@Jin 地图缩放组件
+  @VisibleForTesting
+  boolean isZoomInOutInitialized = false;
+
   UiSettings(@NonNull Projection projection, @NonNull FocalPointChangeListener listener,
              float pixelRatio, MapView mapView) {
     this.projection = projection;
@@ -117,6 +130,11 @@ public final class UiSettings {
     if (options.getAttributionEnabled()) {
       initialiseAttribution(context, options);
     }
+
+    //@Jin 初始化地图缩放组件
+    if (options.getZoomInOutEnabled()) {
+      initialiseZoomInOut(options, resources);
+    }
   }
 
   void onSaveInstanceState(@NonNull Bundle outState) {
@@ -126,6 +144,9 @@ public final class UiSettings {
     saveAttribution(outState);
     saveDeselectMarkersOnTap(outState);
     saveFocalPoint(outState);
+
+    //@Jin 保存地图缩放组件状态
+    saveZoomInOut(outState);
   }
 
   void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
@@ -135,6 +156,9 @@ public final class UiSettings {
     restoreAttribution(savedInstanceState);
     restoreDeselectMarkersOnTap(savedInstanceState);
     restoreFocalPoint(savedInstanceState);
+
+    //@Jin 恢复地图缩放组件状态
+    restoreZoomInOut(savedInstanceState);
   }
 
   private void initialiseGestures(MapLibreMapOptions options) {
@@ -319,6 +343,46 @@ public final class UiSettings {
       savedInstanceState.getInt(MapLibreConstants.STATE_ATTRIBUTION_MARGIN_BOTTOM));
   }
 
+  //@Jin 地图缩放组件
+  private void initialiseZoomInOut(MapLibreMapOptions options,@NonNull Resources resources) {
+    isZoomInOutInitialized = true;
+    zoomInOutView = mapView.initializeZoomInOutView();
+    setZoomInOutEnabled(options.getZoomInOutEnabled());
+    setZoomInOutGravity(options.getZoomInOutGravity());
+
+    int[] zoomInOutMargins = options.getZoomInOutMargins();
+    if (zoomInOutMargins != null) {
+      setZoomInOutMargins(zoomInOutMargins[0], zoomInOutMargins[1], zoomInOutMargins[2], zoomInOutMargins[3]);
+    } else {
+      int tenDp = (int) resources.getDimension(R.dimen.maplibre_four_dp);
+      setZoomInOutMargins(tenDp, tenDp, tenDp, tenDp);
+    }
+  }
+
+  //@Jin 保存地图缩放组件状态
+  private void saveZoomInOut(Bundle outState) {
+    outState.putBoolean(MapLibreConstants.STATE_ZOOM_IN_OUT_ENABLED, isZoomInOutEnabled());
+    outState.putInt(MapLibreConstants.STATE_ZOOM_IN_OUT_GRAVITY, getZoomInOutGravity());
+    outState.putInt(MapLibreConstants.STATE_ZOOM_IN_OUT_MARGIN_LEFT, getZoomInOutMarginLeft());
+    outState.putInt(MapLibreConstants.STATE_ZOOM_IN_OUT_MARGIN_TOP, getZoomInOutMarginTop());
+    outState.putInt(MapLibreConstants.STATE_ZOOM_IN_OUT_MARGIN_RIGHT, getZoomInOutMarginRight());
+    outState.putInt(MapLibreConstants.STATE_ZOOM_IN_OUT_MARGIN_BOTTOM, getZoomInOutMarginBottom());
+  }
+  private void restoreZoomInOut(Bundle savedInstanceState) {
+    boolean zoomInOutEnabled = savedInstanceState.getBoolean(MapLibreConstants.STATE_ZOOM_IN_OUT_ENABLED);
+    if (zoomInOutEnabled && !isZoomInOutInitialized) {
+      zoomInOutView = mapView.initializeZoomInOutView();
+      isZoomInOutInitialized = true;
+    }
+    setZoomInOutEnabled(savedInstanceState.getBoolean(MapLibreConstants.STATE_ZOOM_IN_OUT_ENABLED));
+    setZoomInOutGravity(savedInstanceState.getInt(MapLibreConstants.STATE_ZOOM_IN_OUT_GRAVITY));
+    setZoomInOutMargins(
+      savedInstanceState.getInt(MapLibreConstants.STATE_ZOOM_IN_OUT_MARGIN_LEFT),
+      savedInstanceState.getInt(MapLibreConstants.STATE_ZOOM_IN_OUT_MARGIN_TOP),
+      savedInstanceState.getInt(MapLibreConstants.STATE_ZOOM_IN_OUT_MARGIN_RIGHT),
+      savedInstanceState.getInt(MapLibreConstants.STATE_ZOOM_IN_OUT_MARGIN_BOTTOM));
+  }
+
   public long getFlingAnimationBaseTime() {
     return flingAnimationBaseTime;
   }
@@ -364,6 +428,13 @@ public final class UiSettings {
   public boolean isCompassEnabled() {
     if (compassView != null) {
       return compassView.isEnabled();
+    } else {
+      return false;
+    }
+  }
+  public boolean isZoomInOutEnabled() {
+    if (zoomInOutView != null) {
+      return zoomInOutView.isEnabled();
     } else {
       return false;
     }
@@ -545,7 +616,6 @@ public final class UiSettings {
       return false;
     }
   }
-
   /**
    * <p>
    * Sets the gravity of the logo view. Use this to change the corner of the map view that the
@@ -628,6 +698,76 @@ public final class UiSettings {
   public int getLogoMarginBottom() {
     return logoMargins[3];
   }
+
+
+  /**
+   * @Jin
+   */
+  public void setZoomInOutEnabled(boolean enabled) {
+    if (enabled && !isZoomInOutInitialized) {
+      initialiseZoomInOut(mapView.maplibreMapOptions, mapView.getContext().getResources());
+    }
+    if (zoomInOutView != null) {
+      zoomInOutView.setEnabled(enabled);
+//      zoomInOutView.setVisibility(enabled ? View.VISIBLE : View.GONE);
+    }
+  }
+
+  public void setZoomInOutGravity(int gravity) {
+    if (zoomInOutView != null) {
+      setWidgetGravity(zoomInOutView, gravity);
+    }
+  }
+
+  public void setZoomInOutMargins(@Px int left, @Px int top, @Px int right, @Px int bottom) {
+    if (zoomInOutView != null) {
+      setWidgetMargins(zoomInOutView, zoomInOutMargins, left, top, right, bottom);
+    }
+  }
+
+  public int getZoomInOutGravity() {
+    if (zoomInOutView != null) {
+      return ((FrameLayout.LayoutParams) zoomInOutView.getLayoutParams()).gravity;
+    } else {
+      return -1;
+    }
+  }
+
+  @Px
+  public int getZoomInOutMarginLeft() {
+    return zoomInOutMargins[0];
+  }
+
+  /**
+   * Returns the top side margin of the zoomInOutView in pixels.
+   *
+   * @return The top margin in pixels
+   */
+  @Px
+  public int getZoomInOutMarginTop() {
+    return zoomInOutMargins[1];
+  }
+
+  /**
+   * Returns the right side margin of the zoomInOutView in pixels.
+   *
+   * @return The right margin in pixels
+   */
+  @Px
+  public int getZoomInOutMarginRight() {
+    return zoomInOutMargins[2];
+  }
+
+  /**
+   * Returns the bottom side margin of the zoomInOutView in pixels.
+   *
+   * @return The bottom margin in pixels
+   */
+  @Px
+  public int getZoomInOutMarginBottom() {
+    return zoomInOutMargins[3];
+  }
+
 
   /**
    * <p>

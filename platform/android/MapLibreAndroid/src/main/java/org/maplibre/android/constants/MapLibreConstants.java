@@ -244,4 +244,12 @@ public class MapLibreConstants {
   public static final String STATE_INCREASE_ROTATE_THRESHOLD = "maplibre_increaseRotateThreshold";
   public static final String STATE_DISABLE_ROTATE_WHEN_SCALING = "maplibre_disableRotateWhenScaling";
   public static final String STATE_INCREASE_SCALE_THRESHOLD = "maplibre_increaseScaleThreshold";
+
+  //@Jin 地图缩放组件状态键
+  public static final String STATE_ZOOM_IN_OUT_ENABLED = "maplibre_zoomInOutEnabled";
+  public static final String STATE_ZOOM_IN_OUT_GRAVITY = "maplibre_zoomInOutGravity";
+  public static final String STATE_ZOOM_IN_OUT_MARGIN_LEFT = "maplibre_zoomInOutMarginLeft";
+  public static final String STATE_ZOOM_IN_OUT_MARGIN_TOP = "maplibre_zoomInOutMarginTop";
+  public static final String STATE_ZOOM_IN_OUT_MARGIN_RIGHT = "maplibre_zoomInOutMarginRight";
+  public static final String STATE_ZOOM_IN_OUT_MARGIN_BOTTOM = "maplibre_zoomInOutMarginBottom";
 }

@@ -1,0 +1,66 @@
+{
+  "sources": {
+    "tianditu": {
+      "type": "raster",
+      "tiles": [
+        "https://t0.tianditu.gov.cn/DataServer?T=img_w&x={x}&y={y}&l={z}&tk=3a0e194282fe0796c9dd6e2e8bfdae3e",
+        "https://t1.tianditu.gov.cn/DataServer?T=img_w&x={x}&y={y}&l={z}&tk=3a0e194282fe0796c9dd6e2e8bfdae3e",
+        "https://t2.tianditu.gov.cn/DataServer?T=img_w&x={x}&y={y}&l={z}&tk=3a0e194282fe0796c9dd6e2e8bfdae3e",
+        "https://t3.tianditu.gov.cn/DataServer?T=img_w&x={x}&y={y}&l={z}&tk=3a0e194282fe0796c9dd6e2e8bfdae3e",
+        "https://t4.tianditu.gov.cn/DataServer?T=img_w&x={x}&y={y}&l={z}&tk=3a0e194282fe0796c9dd6e2e8bfdae3e",
+        "https://t5.tianditu.gov.cn/DataServer?T=img_w&x={x}&y={y}&l={z}&tk=3a0e194282fe0796c9dd6e2e8bfdae3e",
+        "https://t6.tianditu.gov.cn/DataServer?T=img_w&x={x}&y={y}&l={z}&tk=3a0e194282fe0796c9dd6e2e8bfdae3e",
+        "https://t7.tianditu.gov.cn/DataServer?T=img_w&x={x}&y={y}&l={z}&tk=3a0e194282fe0796c9dd6e2e8bfdae3e"
+      ],
+      "maxzoom": 18,
+      "tileSize": 256
+    },
+    "tdt-image-label": {
+      "type": "raster",
+      "tileSize": 256,
+      "tiles": [
+        "https://t0.tianditu.gov.cn/DataServer?T=cia_w&x={x}&y={y}&l={z}&tk=3a0e194282fe0796c9dd6e2e8bfdae3e",
+        "https://t1.tianditu.gov.cn/DataServer?T=cia_w&x={x}&y={y}&l={z}&tk=3a0e194282fe0796c9dd6e2e8bfdae3e",
+        "https://t2.tianditu.gov.cn/DataServer?T=cia_w&x={x}&y={y}&l={z}&tk=3a0e194282fe0796c9dd6e2e8bfdae3e",
+        "https://t3.tianditu.gov.cn/DataServer?T=cia_w&x={x}&y={y}&l={z}&tk=3a0e194282fe0796c9dd6e2e8bfdae3e",
+        "https://t4.tianditu.gov.cn/DataServer?T=cia_w&x={x}&y={y}&l={z}&tk=3a0e194282fe0796c9dd6e2e8bfdae3e",
+        "https://t5.tianditu.gov.cn/DataServer?T=cia_w&x={x}&y={y}&l={z}&tk=3a0e194282fe0796c9dd6e2e8bfdae3e",
+        "https://t6.tianditu.gov.cn/DataServer?T=cia_w&x={x}&y={y}&l={z}&tk=3a0e194282fe0796c9dd6e2e8bfdae3e",
+        "https://t7.tianditu.gov.cn/DataServer?T=cia_w&x={x}&y={y}&l={z}&tk=3a0e194282fe0796c9dd6e2e8bfdae3e"
+      ],
+      "minzoom": 0,
+      "maxzoom": 20
+    }
+  },
+  "layers": [
+
+    {
+      "id": "tianditu-layer",
+      "name": "天地图影像",
+      "type": "raster",
+      "source": "tianditu",
+      "metadata": {
+        "isBaseMap": true
+      },
+      "layout": {
+        "visibility": "visible"
+      }
+    },
+    {
+      "id": "tdt-image-label-layer",
+      "name": "地名",
+      "type": "raster",
+      "source": "tdt-image-label",
+      "minzoom": 1,
+      "maxzoom": 10,
+      "metadata": {
+        "isBaseMap": true
+      },
+      "layout": {
+        "visibility": "none"
+      }
+    }
+  ],
+  "glyphs": "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
+  "version": 8
+}

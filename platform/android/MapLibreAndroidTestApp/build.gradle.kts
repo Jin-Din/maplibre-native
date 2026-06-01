@@ -136,6 +136,7 @@ kotlin {
 }
 
 dependencies {
+    // 引入 MapLibreAndroid 库
     implementation(project(":MapLibreAndroid"))
 
     implementation(libs.maplibreNavigation) {

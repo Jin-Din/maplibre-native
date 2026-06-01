@@ -846,7 +846,7 @@ public class Style {
     @Deprecated
     @NonNull
     public Builder fromUrl(@NonNull String url) {
-      this.styleUri = url;
+      this.styleUri = parserUrl(url);
       return this;
     }
 
@@ -881,8 +881,23 @@ public class Style {
      */
     @NonNull
     public Builder fromUri(@NonNull String uri) {
-      this.styleUri = uri;
+      this.styleUri = parserUrl(uri);
       return this;
+    }
+
+    /**
+     * 对地址拦截处理。仅对youmap://协议进行处理。
+     * 注意：这里仅做预留，还未实现，后续会根据实际情况进行调整。
+     *  @author Jin add
+     * @param uri
+     * @return
+     */
+    private String parserUrl(@NonNull String uri){
+      String parseredUrl = uri;
+      if(parseredUrl.startsWith("youmap://")){
+        parseredUrl = parseredUrl.replace("youmap://","http://");
+      }
+      return parseredUrl;
     }
 
     /**

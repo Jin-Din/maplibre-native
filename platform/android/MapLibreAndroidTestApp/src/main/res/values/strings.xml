@@ -9,4 +9,6 @@
     <string name="description_world_tour_benchmark">Writes out avg. fps and 1% fps after world tour with .flyTo()</string>
     <string name="search">Search</string>
     <string name="category_data">Data Sources</string>
+    <string name="map_zoom_in_plus">+</string>
+    <string name="map_zoom_out_minus">-</string>
 </resources>
